@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EMS Grammar Bot | Modern Learning</title>
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --secondary: #a855f7;
+            --accent: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --glass: rgba(255, 255, 255, 0.1);
+            --glass-white: rgba(255, 255, 255, 0.95);
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at top left, #1e1b4b, #312e81, #1e1b4b);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: white;
+        }
+
+        .container {
+            background: var(--glass-white);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            max-width: 900px;
+            width: 100%;
+            padding: 40px;
+            color: var(--text-dark);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.8em;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+            font-size: 1.1em;
+            font-weight: 400;
+        }
+
+        /* Upload Section */
+        .upload-card {
+            background: #f8fafc;
+            border: 2px dashed #e2e8f0;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .upload-card:hover {
+            border-color: var(--primary);
+            background: #f1f5f9;
+            transform: translateY(-2px);
+        }
+
+        .upload-card.active {
+            border-color: var(--accent);
+            background: #f0fdf4;
+            border-style: solid;
+        }
+
+        .record-orb {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 24px;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
+            transition: all 0.3s;
+            position: relative;
+            z-index: 2;
+        }
+
+        .record-orb:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 30px rgba(99, 102, 241, 0.6);
+        }
+
+        .record-orb.recording {
+            background: var(--danger);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            }
+
+            70% {
+                transform: scale(1.1);
+                box-shadow: 0 0 0 20px rgba(239, 68, 68, 0);
+            }
+
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+            }
+        }
+
+        .waves-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            height: 40px;
+            margin: 20px 0;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .waves-container.active {
+            opacity: 1;
+        }
+
+        .bar {
+            width: 4px;
+            height: 10px;
+            background: var(--danger);
+            border-radius: 2px;
+            animation: wave 0.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes wave {
+            from {
+                height: 5px;
+            }
+
+            to {
+                height: 35px;
+            }
+        }
+
+        .bar:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+
+        .bar:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+
+        .bar:nth-child(4) {
+            animation-delay: 0.15s;
+        }
+
+        .bar:nth-child(5) {
+            animation-delay: 0.25s;
+        }
+
+        .btn {
+            padding: 12px 28px;
+            border-radius: 14px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1em;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #e2e8f0;
+            color: var(--text-dark);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Transcript Input Box */
+        .transcript-area {
+            width: 100%;
+            min-height: 120px;
+            padding: 20px;
+            border-radius: 16px;
+            border: 2px solid #e2e8f0;
+            background: white;
+            color: var(--text-dark);
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin-top: 20px;
+            resize: vertical;
+            transition: border-color 0.3s;
+            display: none;
+        }
+
+        .transcript-area:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .transcript-area.show {
+            display: block;
+            animation: slideUp 0.4s ease-out, glowPulse 2s infinite alternate;
+        }
+
+        @keyframes glowPulse {
+            from {
+                border-color: #e2e8f0;
+                box-shadow: 0 0 0 rgba(99, 102, 241, 0);
+            }
+
+            to {
+                border-color: var(--primary);
+                box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Status & Loader */
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-top: 20px;
+            opacity: 0;
+            transition: 0.3s;
+        }
+
+        .status-pill.show {
+            opacity: 1;
+        }
+
+        .status-loading {
+            background: #eff6ff;
+            color: var(--primary);
+        }
+
+        .status-success {
+            background: #ecfdf5;
+            color: var(--accent);
+        }
+
+        .status-error {
+            background: #fef2f2;
+            color: var(--danger);
+        }
+
+        .analyze-btn {
+            width: 100%;
+            margin-top: 30px;
+            padding: 18px;
+            font-size: 1.25em;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+            display: none;
+        }
+
+        .analyze-btn.show {
+            display: inline-flex;
+        }
+
+        /* Results */
+        .results-grid {
+            margin-top: 40px;
+            display: grid;
+            gap: 30px;
+            display: none;
+        }
+
+        .results-grid.show {
+            display: grid;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 24px;
+            border-radius: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            border: 1px solid #f1f5f9;
+        }
+
+        .stat-val {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 4px;
+        }
+
+        .analysis-section {
+            background: #f8fafc;
+            border-radius: 20px;
+            padding: 30px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            color: var(--text-dark);
+            font-weight: 700;
+            font-size: 1.25em;
+        }
+
+        .error-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border-left: 6px solid var(--danger);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+        }
+
+        .error-original {
+            color: var(--danger);
+            text-decoration: line-through;
+            font-size: 0.95em;
+            margin-bottom: 8px;
+        }
+
+        .error-correction {
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 1.1em;
+            margin-bottom: 12px;
+        }
+
+        .error-explanation {
+            border-top: 1px solid #f1f5f9;
+            padding-top: 12px;
+            font-size: 0.95em;
+            color: var(--text-muted);
+        }
+
+        .badge {
+            padding: 6px 16px;
+            border-radius: 100px;
+            font-size: 0.85em;
+            font-weight: 700;
+        }
+
+        .badge-beginner {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .badge-intermediate {
+            background: #fef3c7;
+            color: #b45309;
+        }
+
+        .badge-advanced {
+            background: #d1fae5;
+            color: #047857;
+        }
+
+        .settings-link {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: var(--text-muted);
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        #apiSettingsPanel {
+            position: absolute;
+            top: 60px;
+            right: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            display: none;
+            border: 1px solid #e2e8f0;
+        }
+
+        #apiSettingsPanel.show {
+            display: block;
+        }
+
+        input.url-input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="settings-link" onclick="toggleSettings()"><i data-lucide="settings"></i></div>
+    <div id="apiSettingsPanel">
+        <label style="font-size: 0.8em; font-weight: 600;">API BASE URL</label>
+        <input type="text" id="apiUrl" class="url-input" value="http://localhost:8000">
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>EMS Grammar Bot</h1>
+            <p class="subtitle">Master English with AI-powered voice analysis</p>
+        </header>
+
+        <main>
+            <div class="upload-card" id="dropZone">
+                <div id="recordingUI">
+                    <div class="record-orb" id="recordBtn">
+                        <i data-lucide="mic" size="40"></i>
+                    </div>
+                    <div id="recordTimer" style="font-weight: 600; color: var(--text-muted); display: none;">00:00</div>
+                    <div class="waves-container" id="waves">
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                    </div>
+                    <p id="uploadHint" style="color: var(--text-muted);">Tap to record or drag & drop audio here</p>
+                </div>
+
+                <div id="fileActions" style="margin-top: 20px;">
+                    <button class="btn btn-outline" onclick="document.getElementById('audioFile').click()">
+                        <i data-lucide="file-audio"></i> Choose File
+                    </button>
+                    <input type="file" id="audioFile" accept="audio/*">
+                </div>
+
+                <!-- Editable Transcript Input Box -->
+                <textarea id="transcriptInput" class="transcript-area"
+                    placeholder="Transcribed text will appear here... you can edit it before analysis!"></textarea>
+
+                <div id="statusPill" class="status-pill">
+                    <i id="statusIcon" data-lucide="loader-2"></i>
+                    <span id="statusText">Ready</span>
+                </div>
+            </div>
+
+            <button id="analyzeBtn" class="btn btn-primary analyze-btn">
+                <i data-lucide="sparkles"></i> Analyze Grammar
+            </button>
+
+            <div class="results-grid" id="results">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                    <div class="stat-card">
+                        <div class="stat-val" id="sentenceCount">0</div>
+                        <div class="stat-label">Sentences</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-val" id="errorCount">0</div>
+                        <div class="stat-label">Errors</div>
+                    </div>
+                    <div class="stat-card">
+                        <div id="levelBadge" class="badge">Advanced</div>
+                        <div class="stat-label">Proficiency</div>
+                    </div>
+                </div>
+
+                <div class="analysis-section">
+                    <div class="section-header">
+                        <i data-lucide="alert-circle" style="color: var(--danger)"></i>
+                        Grammar Feedback
+                    </div>
+                    <div id="errorsContainer"></div>
+                </div>
+
+                <div class="analysis-section" style="background: #f0fdf4;">
+                    <div class="section-header">
+                        <i data-lucide="check-circle" style="color: var(--accent)"></i>
+                        Improved Version
+                    </div>
+                    <div id="fullyCorrected" style="line-height: 1.8; font-size: 1.1em; color: #1e293b;"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Elements
+        const recordBtn = document.getElementById('recordBtn');
+        const waves = document.getElementById('waves');
+        const timerDisplay = document.getElementById('recordTimer');
+        const transcriptInput = document.getElementById('transcriptInput');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const statusPill = document.getElementById('statusPill');
+        const statusText = document.getElementById('statusText');
+        const audioFile = document.getElementById('audioFile');
+        const dropZone = document.getElementById('dropZone');
+        const results = document.getElementById('results');
+        const apiUrl = document.getElementById('apiUrl');
+
+        let mediaRecorder;
+        let audioChunks = [];
+        let timerInterval;
+        let seconds = 0;
+
+        function toggleSettings() {
+            document.getElementById('apiSettingsPanel').classList.toggle('show');
+        }
+
+        function showStatus(text, type) {
+            statusPill.className = `status-pill show status-${type}`;
+            statusText.textContent = text;
+
+            // Re-select icon container to avoid stale reference after Lucide replaces it
+            const iconContainer = document.getElementById('statusIcon');
+            const iconName = type === 'loading' ? 'loader-2' : (type === 'success' ? 'check' : 'alert-triangle');
+
+            iconContainer.setAttribute('data-lucide', iconName);
+
+            if (type === 'loading') {
+                iconContainer.classList.add('spin-animation');
+            } else {
+                iconContainer.classList.remove('spin-animation');
+            }
+
+            lucide.createIcons();
+        }
+
+        function updateTimer() {
+            seconds++;
+            const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+            const secs = (seconds % 60).toString().padStart(2, '0');
+            timerDisplay.textContent = `${mins}:${secs}`;
+        }
+
+        recordBtn.addEventListener('click', async () => {
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+                stopRecording();
+                return;
+            }
+
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                audioChunks = [];
+
+                mediaRecorder.ondataavailable = (e) => audioChunks.push(e.data);
+                mediaRecorder.onstop = async () => {
+                    const blob = new Blob(audioChunks, { type: 'audio/webm' });
+                    const file = new File([blob], "recorded.webm", { type: 'audio/webm' });
+                    handleFileUpload(file);
+                };
+
+                mediaRecorder.start();
+                recordBtn.classList.add('recording');
+                waves.classList.add('active');
+                timerDisplay.style.display = 'block';
+                seconds = 0;
+                timerInterval = setInterval(updateTimer, 1000);
+                showStatus('Capturing Voice...', 'loading');
+
+            } catch (err) {
+                showStatus('Mic Access Denied', 'error');
+            }
+        });
+
+        function stopRecording() {
+            mediaRecorder.stop();
+            mediaRecorder.stream.getTracks().forEach(t => t.stop());
+            recordBtn.classList.remove('recording');
+            waves.classList.remove('active');
+            clearInterval(timerInterval);
+            timerDisplay.style.display = 'none';
+        }
+
+        audioFile.addEventListener('change', (e) => {
+            if (e.target.files[0]) handleFileUpload(e.target.files[0]);
+        });
+
+        async function handleFileUpload(file) {
+            showStatus('Uploading...', 'loading');
+            results.classList.remove('show');
+            analyzeBtn.classList.remove('show');
+            transcriptInput.classList.remove('show');
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                // Step 1: Upload
+                const uploadRes = await fetch(`${apiUrl.value}/audio/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
+                if (!uploadRes.ok) throw new Error('Upload failed');
+                const uploadData = await uploadRes.json();
+                const fileId = uploadData.file_id;
+
+                // Step 2: Transcribe
+                showStatus('Transcribing Voice...', 'loading');
+                const transcribeRes = await fetch(`${apiUrl.value}/transcription/transcribe`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ file_id: fileId })
+                });
+                if (!transcribeRes.ok) throw new Error('Transcription failed');
+                const transcribeData = await transcribeRes.json();
+
+                // Show the transcript in the input box for editing
+                transcriptInput.value = transcribeData.transcript;
+                transcriptInput.classList.add('show');
+                analyzeBtn.classList.add('show');
+                showStatus('Transcription Ready! You can edit it above.', 'success');
+                transcriptInput.scrollIntoView({ behavior: 'smooth' });
+
+            } catch (err) {
+                console.error(err);
+                showStatus('Processing failed: ' + err.message, 'error');
+            }
+        }
+
+        analyzeBtn.addEventListener('click', async () => {
+            showStatus('Analyzing Grammar...', 'loading');
+            results.classList.remove('show');
+            analyzeBtn.disabled = true;
+
+            try {
+                const response = await fetch(`${apiUrl.value}/grammar/analyze`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ transcript: transcriptInput.value })
+                });
+
+                if (!response.ok) throw new Error('Analysis failed');
+                const data = await response.json();
+
+                displayResults(data);
+                showStatus('Analysis Complete', 'success');
+                results.classList.add('show');
+                results.scrollIntoView({ behavior: 'smooth' });
+
+            } catch (err) {
+                showStatus('Analysis failed', 'error');
+            } finally {
+                analyzeBtn.disabled = false;
+            }
+        });
+
+        function displayResults(data) {
+            document.getElementById('sentenceCount').textContent = data.summary.total_sentences;
+            document.getElementById('errorCount').textContent = data.summary.total_errors;
+            const badge = document.getElementById('levelBadge');
+            badge.textContent = data.summary.overall_level;
+            badge.className = `badge badge-${data.summary.overall_level.toLowerCase()}`;
+
+            const container = document.getElementById('errorsContainer');
+            container.innerHTML = '';
+
+            if (data.errors.length === 0) {
+                container.innerHTML = '<div style="color: var(--accent); text-align: center; font-weight: 600;">No errors found! Great job.</div>';
+            } else {
+                data.errors.forEach(err => {
+                    const card = document.createElement('div');
+                    card.className = 'error-card';
+                    card.innerHTML = `
+                        <div class="error-original">"${err.original}"</div>
+                        <div class="error-correction"><i data-lucide="chevron-right" style="display: inline-block; vertical-align: middle;"></i> ${err.correction}</div>
+                        <div class="error-explanation"><strong>${err.issue_type}:</strong> ${err.explanation}</div>
+                    `;
+                    container.appendChild(card);
+                });
+                lucide.createIcons();
+            }
+
+            document.getElementById('fullyCorrected').textContent = data.corrected_transcript;
+        }
+
+        // Drag and drop
+        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('active'); });
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('active'));
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('active');
+            if (e.dataTransfer.files[0]) handleFileUpload(e.dataTransfer.files[0]);
+        });
+    </script>
+    <style>
+        .spin-animation {
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</body>
+
+</html>
